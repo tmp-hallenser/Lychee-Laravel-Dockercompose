@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+
+    webserver:
+      build:
+        context: Lychee-Laravel-Docker
+        dockerfile: Dockerfile
+      environment:
+                - PHP_TZ=Europe/Berlin
+                - DB_CONNECTION=mysql
+                - DB_HOST=mysql
+                - DB_PORT=3306
+                - DB_DATABASE=lychee_db
+                - DB_USERNAME=lychee
+                - DB_PASSWORD=lychee
+      volumes:
+            - ${HOME}/docker-files/docker-volumes/lychee-laravel/conf:/conf
+            - ${HOME}/docker-files/docker-volumes/lychee-laravel/uploads:/uploads
+      networks:
+            - default
+      restart: always
+      ports:
+            - "80:80"
+
+    mysql:
+      image: mariadb:latest
+      environment:
+                - MYSQL_DATABASE=lychee_db
+                - MYSQL_USER=lychee
+                - MYSQL_PASSWORD=lychee
+                - MYSQL_ROOT_PASSWORD=test
+      networks:
+            - default
+      ports:
+              - "3306:3306"
+      restart: always
+      volumes:
+        - ${HOME}/docker-files/docker-volumes/lychee-laravel/mysql_data:/var/lib/mysql/data
+
+    sync:
+      build:
+        context: Lychee-Laravel-Sync-Docker
+        dockerfile: Dockerfile
+      environment:
+        - DB_HOST=mysql
+        - DB_PORT=3306
+        - DB_DATABASE=lychee_db
+        - DB_USERNAME=lychee
+        - DB_PASSWORD=lychee
+        - EXCLUDE_ALBUM_PATH1=_source
+        - EXCLUDE_ALBUM_PATH2=_ignore
+        - EXCLUDE_ALBUM_PATH3=.AppleDouble
+      volumes:
+        - ${HOME}/docker-files/docker-volumes/lychee-laravel/uploads:/uploads
+        - ${HOME}/docker-files/docker-volumes/lychee-laravel/import:/import
+      networks:
+        - default
+      tty: true
+      stdin_open: true
+
+    serveo:
+      build:
+          context: Serveo-Docker
+          dockerfile: Dockerfile
+      tty: true
+      stdin_open: true
+      restart: always
+      command: "ssh -R ${SERVEO_URL}_lychee:80:webserver:80 -o \"StrictHostKeyChecking no\" serveo.net"
+
+networks:
+  default:
+

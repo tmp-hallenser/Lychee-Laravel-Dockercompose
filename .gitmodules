@@ -1,0 +1,10 @@
+[submodule "Lychee-Laravel-Docker"]
+	path = Lychee-Laravel-Docker
+	url = https://github.com/tmp-hallenser/Lychee-Laravel-Docker.git
+	branch = alpine
+[submodule "Lychee-Laravel-Sync-Docker"]
+	path = Lychee-Laravel-Sync-Docker
+	url = https://github.com/tmp-hallenser/Lychee-Laravel-Sync-Docker.git
+[submodule "Serveo-Docker"]
+	path = Serveo-Docker
+	url = https://github.com/tmp-hallenser/Serveo-Docker.git
